@@ -1,0 +1,6 @@
+@Ali_Mav.BlogAPI_HostAddress = http://localhost:5028
+
+GET {{Ali_Mav.BlogAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
