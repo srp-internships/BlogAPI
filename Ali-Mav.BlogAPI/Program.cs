@@ -45,7 +45,6 @@ namespace Ali_Mav.BlogAPI
 
             app.UseAuthorization();
 
-
             app.MapControllers();
 
             app.Run();
