@@ -19,6 +19,10 @@ namespace Ali_Mav.BlogAPI.Data.Mappar
             this.CreateMap<Post, PostGetDto>()
                 .ForMember(dst => dst.UserFullName,
                 opt => opt.MapFrom(src => src.User.FullName));
+
+            this.CreateMap<Post, PostCreateDto>();
+
+
         }
     }
 }
