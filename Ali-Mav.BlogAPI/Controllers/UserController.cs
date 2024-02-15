@@ -17,14 +17,6 @@ namespace Ali_Mav.BlogAPI.Controllers
             _userService = userService;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<BaseResponse<List<User>>>> AddUsers()
-        {
-            var response = await _userService.CreateAll();
-            
-            return response;
-        }
-
         [HttpGet]
         public async Task<ActionResult<User>> Search(string word)
         { 
@@ -35,7 +27,6 @@ namespace Ali_Mav.BlogAPI.Controllers
             }
 
             return BadRequest(response);
-        
         }
 
 

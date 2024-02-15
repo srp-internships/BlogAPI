@@ -9,11 +9,11 @@ namespace Ali_Mav.BlogAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SeadController : ControllerBase
+    public class PostsController : ControllerBase
     {
         private readonly IPostService _postService;
 
-        public SeadController(IPostService postService)
+        public PostsController(IPostService postService)
         {
             _postService = postService;
         }
@@ -29,18 +29,7 @@ namespace Ali_Mav.BlogAPI.Controllers
 
             return BadRequest(response);
         }
-
-        [HttpPost("AddPosts")]
-        public async Task<ActionResult<BaseResponse<List<Post>>>> AddAllPosts()
-        {
-            var response = await _postService.CreateAll();
-            if (response.success)
-            {
-                return Ok(response);
-            }
-
-            return BadRequest(response);
-        }
+        
         [HttpGet("GetAll")]
         public async Task<ActionResult<BaseResponse<List<PostGetDto>>>> GetAll() 
         {

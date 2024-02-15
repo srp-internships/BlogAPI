@@ -49,9 +49,11 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
                     serviceResponse.Data = _userRepository.GetAll().ToList();
                     serviceResponse.success = true;
                 }
-
-                serviceResponse.Description = "there is data in the database";
-                serviceResponse.success = false;
+                else
+                {
+                    serviceResponse.Description = "there is data in the database";
+                    serviceResponse.success = false;
+                }
             }
             catch (Exception ex)
             {

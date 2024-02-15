@@ -38,18 +38,17 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
                 if (response.IsSuccessStatusCode && db == false)
                 {
                     var json = await response.Content.ReadAsStringAsync();
-                    List<Post> posts = JsonConvert.DeserializeObject<List<Post>>(json);
 
-                    List<PostGetDto> postsDto = new List<PostGetDto>();
+                    List<PostCreateDto> posts = JsonConvert.DeserializeObject<List<PostCreateDto>>(json);
+
                     foreach (var post1 in posts)
                     {
-                        await _postRepository.Create(post1);
-                        
-                        postsDto.Add(_mapper.Map<PostGetDto>(post1));
+                        await CreatePost(post1);
                     }
 
+                    var posts2 = await GetAll();
+                    serviceResponse.Data = posts2.Data;
                     serviceResponse.success = true;
-                    serviceResponse.Data = postsDto;
                 }
 
                 else
@@ -84,6 +83,7 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
                         User = user.Data
                     };
 
+                    //await _postRepository.AddAsync(post);
                     await _postRepository.Create(post);
                     
                     serResponse.Data = post;

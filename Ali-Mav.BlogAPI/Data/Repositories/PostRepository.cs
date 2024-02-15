@@ -11,6 +11,13 @@ namespace Ali_Mav.BlogAPI.Data.Repositories
         {
             _appDbContext = context;
         }
+
+        public async Task AddAsync(Post post)
+        {
+            await _appDbContext.Posts.AddAsync(post);
+            await _appDbContext.SaveChangesAsync();
+        }
+
         public async Task Create(Post entity)
         {
             _appDbContext.Posts.Add(entity);
