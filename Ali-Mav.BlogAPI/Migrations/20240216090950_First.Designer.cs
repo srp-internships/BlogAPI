@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ali_Mav.BlogAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240215092100_First")]
+    [Migration("20240216090950_First")]
     partial class First
     {
         /// <inheritdoc />
@@ -98,12 +98,17 @@ namespace Ali_Mav.BlogAPI.Migrations
             modelBuilder.Entity("Ali_Mav.BlogAPI.Models.Post", b =>
                 {
                     b.HasOne("Ali_Mav.BlogAPI.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Posts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Ali_Mav.BlogAPI.Models.User", b =>
+                {
+                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }
