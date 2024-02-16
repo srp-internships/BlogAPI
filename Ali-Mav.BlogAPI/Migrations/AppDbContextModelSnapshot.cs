@@ -95,12 +95,17 @@ namespace Ali_Mav.BlogAPI.Migrations
             modelBuilder.Entity("Ali_Mav.BlogAPI.Models.Post", b =>
                 {
                     b.HasOne("Ali_Mav.BlogAPI.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Posts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Ali_Mav.BlogAPI.Models.User", b =>
+                {
+                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }
