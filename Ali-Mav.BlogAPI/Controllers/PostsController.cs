@@ -19,27 +19,28 @@ namespace Ali_Mav.BlogAPI.Controllers
         }
 
         [HttpPost("Create")]
-        public async Task<ActionResult<BaseResponse<Post>>> Create(PostCreateDto postDto)
+        public async Task<ActionResult<Post>> Create(PostCreateDto postDto)
         {
+
             var response = await _postService.CreatePost(postDto);
             if (response.success)
             {
-                return Ok(response);
+                return Ok(response.Data);
             }
 
-            return BadRequest(response);
+            return BadRequest(response.Description);
         }
         
         [HttpGet("GetAll")]
-        public async Task<ActionResult<BaseResponse<List<PostGetDto>>>> GetAll() 
+        public async Task<ActionResult<List<PostGetDto>>> GetAll() 
         {
             var response = await _postService.GetAll();
             if (response.success)
             {
-                return Ok(response);
+                return Ok(response.Data);
             }
             
-            return BadRequest(response);
+            return BadRequest(response.Description);
         }
 
         [HttpGet("GetUserPosts")]
@@ -49,46 +50,46 @@ namespace Ali_Mav.BlogAPI.Controllers
 
             if (response.success)
             {
-                return Ok(response);
+                return Ok(response.Data);
             }
 
-            return BadRequest(response);
+            return BadRequest(response.Description);
         }
 
         [HttpPut("Update")]
-        public async Task<ActionResult<BaseResponse<Post>>> Update(PostUpdateDto postDto)
+        public async Task<ActionResult<PostGetDto>> Update(PostUpdateDto postDto)
         {
             var response = await _postService.UpdatePost(postDto);
             if (response.success)
             {
-                return Ok(response);
+                return Ok(response.Data);
             }
 
-            return BadRequest(response);
+            return BadRequest(response.Description);
         }
 
         [HttpDelete("Delete")]
-        public async Task<ActionResult<BaseResponse<bool>>> Delete(int id)
+        public async Task<ActionResult<string>> Delete(int id)
         {
             var response =await _postService.DeletePost(id);
             if (response.success)
             {
-                return Ok(response);
+                return Ok(response.success);
             }
 
-            return BadRequest(response);
+            return BadRequest(response.Description);
         }
 
         [HttpGet("Page")]
-        public async Task<ActionResult<BaseResponse<List<Post>>>> GetPaging(int pageSize, int pagenumber)
+        public async Task<ActionResult<List<Post>>> GetPaging(int pageSize, int pagenumber)
         { 
             var response = await _postService.GetPaging(pageSize, pagenumber);
             if (response.success)
             {
-                return Ok(response);
+                return Ok(response.Data);
             }
 
-            return BadRequest(response);
+            return BadRequest(response.Description);
         }
     }
 }

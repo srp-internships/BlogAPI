@@ -12,6 +12,13 @@ namespace Ali_Mav.BlogAPI.Data.Repositories
         {
             _appDbContext = context;
         }
+
+        public async Task AddUsers(List<User> users)
+        {
+            await _appDbContext.Users.AddRangeAsync(users);
+            await _appDbContext.SaveChangesAsync();
+        }
+
         public async Task Create(User entity)
         {
             _appDbContext.Users.Add(entity);

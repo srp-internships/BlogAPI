@@ -1,5 +1,6 @@
 ﻿using Ali_Mav.BlogAPI.Data.Interfaces;
 using Ali_Mav.BlogAPI.Models;
+using Ali_Mav.BlogAPI.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ali_Mav.BlogAPI.Data.Repositories
@@ -12,9 +13,10 @@ namespace Ali_Mav.BlogAPI.Data.Repositories
             _appDbContext = context;
         }
 
-        public async Task AddAsync(Post post)
+        public async Task AddRange(List<Post> posts)
         {
-            await _appDbContext.Posts.AddAsync(post);
+
+            await _appDbContext.Posts.AddRangeAsync(posts);
             await _appDbContext.SaveChangesAsync();
         }
 
@@ -45,11 +47,11 @@ namespace Ali_Mav.BlogAPI.Data.Repositories
         public async Task<Post> Update(Post entity)
         {
             var post = await _appDbContext.Posts.FirstOrDefaultAsync(p => p.Id == entity.Id);
-            var user = await _appDbContext.Users.FirstOrDefaultAsync(x => x.Id == entity.UserId);
+
             post.Title = entity.Title;
             post.Body = entity.Body;
-            post.User = user;
-            post.UserId = user.Id;
+            post.User = entity.User;
+            post.UserId = entity.UserId;
 
             await _appDbContext.SaveChangesAsync();
 

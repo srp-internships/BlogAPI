@@ -22,6 +22,7 @@ namespace Ali_Mav.BlogAPI.Models
         public string Address { get; set; }
         public string Phone { get; set; }
         public string CompanyName { get; set; }
-        public List<Post> Posts { get; set; } = [];
+        public List<Post> Posts { get; set; } = new List<Post>();
+
     }
 }

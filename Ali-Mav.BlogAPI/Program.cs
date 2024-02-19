@@ -22,6 +22,7 @@ namespace Ali_Mav.BlogAPI
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IPostRepository,PostRepository>();
             builder.Services.AddScoped<ISeedService,SeedService>();
+            builder.Services.AddScoped<IJsonPlaceHolderService,JsonPlaceHolderService>();
 
 
             var connection = builder.Configuration.GetConnectionString("DbContext");

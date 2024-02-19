@@ -24,45 +24,31 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
 
         }
 
-        public async Task<BaseResponse<List<PostGetDto>>> CreateAll()
+        public async Task<BaseResponse<List<PostCreateDto>>> AddPosts(List<PostCreateDto> postDtos)
         {
-            var serviceResponse = new BaseResponse<List<PostGetDto>>();
+            var serviceResponse = new BaseResponse<List<PostCreateDto>>();
             try
             {
-                var url = "https://jsonplaceholder.typicode.com/posts";
-                var post = new HttpClient();
-
-                var response = await post.GetAsync(url);
-                var db = await _postRepository.GetAll().AnyAsync();
-
-                if (response.IsSuccessStatusCode && db == false)
+                var postDb = _postRepository.GetAll();
+                if (!postDb.Any())
                 {
-                    var json = await response.Content.ReadAsStringAsync();
+                    var postList = _mapper.Map<List<PostCreateDto>, List<Post>>(postDtos);
+                    await _postRepository.AddRange(postList);
 
-                    List<PostCreateDto> posts = JsonConvert.DeserializeObject<List<PostCreateDto>>(json);
-
-                    foreach (var post1 in posts)
-                    {
-                        await CreatePost(post1);
-                    }
-
-                    var posts2 = await GetAll();
-                    serviceResponse.Data = posts2.Data;
                     serviceResponse.success = true;
+                    serviceResponse.Data = postDtos;
                 }
-
                 else
                 {
-                    serviceResponse.success= false;
-                    serviceResponse.Description = "there is data in the database";
+                    serviceResponse.success = false;
                 }
+
             }
             catch (Exception ex)
             {
                 serviceResponse.Description = ex.Message;
                 serviceResponse.success = false;
             }
-
             return serviceResponse;
         }
 
@@ -83,7 +69,6 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
                         User = user.Data
                     };
 
-                    //await _postRepository.AddAsync(post);
                     await _postRepository.Create(post);
                     
                     serResponse.Data = post;
@@ -174,7 +159,7 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
             try
             {
                 var dbPosts = await _postRepository.GetAll().ToListAsync();
-                if (pageSize <= 0 | pageSize > dbPosts.Count | pagenumber > dbPosts.Count/pageSize)
+                if (pageSize <= 0 | pageSize > dbPosts.Count | pagenumber < dbPosts.Count/pageSize)
                 {
                     serviceResponse.Description = $"Pages starts from number 1 to {dbPosts.Count} " +
                         $"and the page number should be no more than {(dbPosts.Count / pageSize) + 1}";
@@ -206,19 +191,18 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
             var seviceResponse = new BaseResponse<List<Post>>();
             try
             {
-                var user = await _postRepository.GetAll()
-                    .Include(c => c.User)
+                var posts = await _postRepository.GetAll()
                     .Where(c => c.UserId == userid).ToListAsync();
 
-                if (user.Any() == false)
+                if (posts.Any() == false)
                 {
                     seviceResponse.success = false;
-                    seviceResponse.Description = $"there are 0 elements in the database with id = {userid}";
+                    seviceResponse.Description = $"There are 0 elements in the database with id = {userid}";
                 }
                 else
                 {
                     seviceResponse.success= true;
-                    seviceResponse.Data = user;
+                    seviceResponse.Data = posts;
                 }
             }
             catch (Exception ex)
@@ -229,26 +213,38 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
             return seviceResponse;
         }
 
-        public async Task<BaseResponse<Post>> UpdatePost(PostUpdateDto updatePost)
+        public async Task<BaseResponse<PostGetDto>> UpdatePost(PostUpdateDto updatePost)
         {
-            var serviceResponse = new BaseResponse<Post>();
+            var serviceResponse = new BaseResponse<PostGetDto>();
             try
             {
                 var post = await _postRepository.GetAll().FirstOrDefaultAsync(p => p.Id == updatePost.Id);
-                var user = await _userService.GetById(updatePost.UserId);
-                if (post != null && user != null) 
+                var responseUserService = await _userService.GetById(updatePost.UserId);
+
+                if (post != null && responseUserService != null) 
                 {
-                    var upPost = await _postRepository.Update(post);
+                    var upNewPost = new Post()
+                    {
+                        Id = updatePost.Id,
+                        User = responseUserService.Data,
+                        UserId = updatePost.UserId,
+                        Body = updatePost.Body,
+                        Title = updatePost.Title,
+                    };
+
+                    var upPost = await _postRepository.Update(upNewPost);
+
+                    var dto = _mapper.Map<PostGetDto>(upPost);
 
                     serviceResponse.success = true;
-                    serviceResponse.Data = upPost;
+                    serviceResponse.Data = dto;
                 }
                 if (post == null)
                 {
                     serviceResponse.success = false;
                     serviceResponse.Description = "PostId not found";
                 }
-                if (user == null)
+                if (responseUserService == null)
                 {
                     serviceResponse.success = false;
                     serviceResponse.Description = "UserId not found";
