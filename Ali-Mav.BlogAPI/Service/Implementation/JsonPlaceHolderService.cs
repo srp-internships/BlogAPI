@@ -6,12 +6,16 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
 {
     public class JsonPlaceHolderService : IJsonPlaceHolderService
     {
-
+        private readonly HttpClient _httpClient;
+        public JsonPlaceHolderService(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
         public async Task<List<PostCreateDto>> FetchPost()
         {
             var url = "https://jsonplaceholder.typicode.com/posts";
-            var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(url);
+            //var httpClient = new HttpClient();
+            var response = await _httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
@@ -27,8 +31,8 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
         public async Task<List<UserViewModel>> FetchUser()
         {
             var url = "https://jsonplaceholder.typicode.com/users";
-            var user = new HttpClient();
-            var response = await user.GetAsync(url);
+            //var user = new HttpClient();
+            var response = await _httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
