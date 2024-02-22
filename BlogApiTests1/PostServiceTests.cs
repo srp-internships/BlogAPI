@@ -52,7 +52,7 @@ public class PostServiceTests
     }
 
     [Test]
-    public async Task AddPosts_WhenPostsExist_ReturnSeccesIsFalse()
+    public async Task AddPosts_WhenPostsExist_ReturnSuccessIsFalse()
     {
         var postDtos = new List<PostCreateDto>
         {
@@ -97,7 +97,7 @@ public class PostServiceTests
     }
     
     [Test]
-    public async Task GetAll_WhenDatabaseEmpty_ReturnSeccesFalseAndDataNull()
+    public async Task GetAll_WhenDatabaseEmpty_ReturnSuccessFalseAndDataNull()
     {
         _postRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Post>());
         var result = await postService.GetAll();
@@ -108,7 +108,7 @@ public class PostServiceTests
     }
 
     [Test]
-    public async Task GetPaging_WhenPageSizeIsZero_ReturnSeccesIsFalse()
+    public async Task GetPaging_WhenPageSizeIsZero_ReturnSuccessIsFalse()
     {
         int pageSize = 0;
         int pageNumber = 1;
@@ -120,7 +120,7 @@ public class PostServiceTests
     }
     
     [Test]
-    public async Task GetPaging_WhenPageSizeIsCreaterThanDbPostsCount_ReturnSeccesIsFalse()
+    public async Task GetPaging_WhenPageSizeIsCreaterThanDbPostsCount_ReturnSuccessIsFalse()
     {
         var mockPostList = new List<Post>();
         for (int i = 0; i < 100; i++)
@@ -142,18 +142,20 @@ public class PostServiceTests
     }
     
     [Test]
-    public async Task GetPaging_WhenPageSizeIsSmallThanDbPostsCount_ReturnSeccesIsTrue()
+    public async Task GetPaging_WhenPageSizeIsSmallerThanDbPostsCount_ReturnSuccessIsTrue()
     {
         var mockPostList = new List<Post>();
         for (int i = 0; i < 100; i++)
         {
-            var post = new Post();
-            post.Id = i++;
+            var post = new Post
+            {
+                Id = i++
+            };
             mockPostList.Add(post);
         }
 
-        int pageSize = 40;
-        int pageNumber = 2;
+        var pageSize = 40;
+        var pageNumber = 2;
         
         _postRepositoryMock.Setup(x => x.GetAll()).Returns(mockPostList);
         _postRepositoryMock.Setup(x => x.GetPaging(pageSize, pageNumber)).ReturnsAsync(mockPostList);
@@ -183,7 +185,7 @@ public class PostServiceTests
     }
     
     [Test]
-    public async Task GetUserPosts_UserNotFound_ReturnSeccesIsFalseAndDataIsNull()
+    public async Task GetUserPosts_UserNotFound_ReturnSuccessIsFalseAndDataIsNull()
     {
         var userId = 2;
         var posts = new List<Post>()
@@ -249,7 +251,7 @@ public class PostServiceTests
     }
     
     [Test]
-    public async Task CreatePost_SetPostCreatDtoButUserNotFound_ReturnSeccesIsFalseDataIsNull()
+    public async Task CreatePost_SetPostCreatDtoButUserNotFound_ReturnSuccessIsFalseDataIsNull()
     {
         // Arrange
         var userId = 4;
@@ -291,7 +293,7 @@ public class PostServiceTests
     }
 
     [Test]
-    public async Task UppDatePost_SetPostUpdateDtoUserExist_ReturnSeccesAndPostGetDto()
+    public async Task UppDatePost_SetPostUpdateDtoUserExist_ReturnSuccessAndPostGetDto()
     {
         var updatePost = new PostUpdateDto()
         {
@@ -338,7 +340,7 @@ public class PostServiceTests
     }
 
     [Test]
-    public async Task UppDatePost_SetPostUpdateDtoButUserNotExist_ReturnSeccesIsFalse()
+    public async Task UppDatePost_SetPostUpdateDtoButUserNotExist_ReturnSuccessIsFalse()
     {
         var updatePost = new PostUpdateDto()
         {
@@ -366,7 +368,7 @@ public class PostServiceTests
 
     } 
     [Test]
-    public async Task UppDatePost_SetPostUpdateDtoButPostNotExist_ReturnSeccesIsFalse()
+    public async Task UppDatePost_SetPostUpdateDtoButPostNotExist_ReturnSuccessIsFalse()
     {
         var updatePost = new PostUpdateDto()
         {
