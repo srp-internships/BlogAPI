@@ -29,18 +29,28 @@ namespace TestProject1;
         [Test]
         public async Task SeedDataBase_WhenNoDataInDatabase_ReturnServiceResponseSuccessIsTrue()
         {
-            _jsonPlaceHolderService.Setup(x => x.FetchPost()).ReturnsAsync(new List<PostCreateDto>());
-            _jsonPlaceHolderService.Setup(x => x.FetchUser()).ReturnsAsync(new List<UserViewModel>());
-            _userService.Setup(x => x.GetAll()).ReturnsAsync(new BaseResponse<List<User>> { Data = new List<User>() });
-
+            SetUpEmptyDatabase();
             var result = await _seedService.SeedDataBase();
-
+            
             Assert.That(result.success, Is.True);
-
         }
         
         [Test]
         public async Task SeedDataBase_WhenWhereIsAlreadyDataInTheDatabase_ReturnServiceResponseSuccessIsFalse()
+        {
+            SetUpNonEmptyDatabase();
+            var result = await _seedService.SeedDataBase();
+
+            Assert.That(result.success, Is.False);
+        }
+
+        private void SetUpEmptyDatabase()
+        {
+            _jsonPlaceHolderService.Setup(x => x.FetchPost()).ReturnsAsync(new List<PostCreateDto>());
+            _jsonPlaceHolderService.Setup(x => x.FetchUser()).ReturnsAsync(new List<UserViewModel>());
+            _userService.Setup(x => x.GetAll()).ReturnsAsync(new BaseResponse<List<User>> { Data = new List<User>() });
+        }
+        private void SetUpNonEmptyDatabase()
         {
             var users = new List<User>
             {
@@ -48,13 +58,8 @@ namespace TestProject1;
                 new User{ Id = 2, Address = "35555sdcsdcsdcds"},
 
             };
-
             _jsonPlaceHolderService.Setup(x => x.FetchPost()).ReturnsAsync(new List<PostCreateDto>());
             _jsonPlaceHolderService.Setup(x => x.FetchUser()).ReturnsAsync(new List<UserViewModel>());
             _userService.Setup(x => x.GetAll()).ReturnsAsync(new BaseResponse<List<User>> { Data = users });
-
-            var result = await _seedService.SeedDataBase();
-
-            Assert.That(result.success, Is.False);
         }
     }

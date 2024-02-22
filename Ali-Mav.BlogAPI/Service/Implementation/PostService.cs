@@ -154,7 +154,7 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
             try
             {
                 var dbPosts = _postRepository.GetAll().Count();
-                if (pageSize <= 0 | pageSize > dbPosts | pagenumber < dbPosts/pageSize)
+                if (pageSize <= 0 | pageSize > dbPosts)
                 {
                     serviceResponse.Description = $"Pages starts from number 1 to {dbPosts}";
                     serviceResponse.success = false;
@@ -165,9 +165,6 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
                     
                     serviceResponse.success = true;
                     serviceResponse.Data = posts;
-                    // if (posts.Count >= 0)
-                    // {
-                    // }
                 }
             }
             catch (Exception ex)

@@ -24,8 +24,10 @@ public class UserServiceTests
     public async Task GetById_IdExists_ReturnUser()
     {
         int userId = 1;
-        var user = new User() 
-            { Id = 1 };
+        var user = new User()
+        {
+            Id = 1
+        };
         _userRepositoryMock.Setup((x => x.GetById(userId))).ReturnsAsync(user);
 
         var result = await _service.GetById((userId));
@@ -49,11 +51,10 @@ public class UserServiceTests
     }
     
     [Test]
-    public async Task GetById_WhenRepositoryThrowsExeption_ReturnError()
+    public async Task GetById_WhenRepositoryThrowsException_ReturnError()
     {
         int userId = 2;
         _userRepositoryMock.Setup(x => x.GetById(userId))!.ThrowsAsync(new Exception("DataBase error"));
-
         
         var result = await _service.GetById((userId));
         
@@ -81,21 +82,22 @@ public class UserServiceTests
     public async Task GetAll_DbIsEmpty_ReturnListEmpty()
     {
         var users = new List<User>();
-        
         _userRepositoryMock.Setup(x => x.GetAll()).Returns(users);
-
+        
         var result = await _service.GetAll();
+        
         Assert.IsFalse(result.success);
         Assert.IsNull(result.Data);
         Assert.AreEqual(result.Description, "Users not found");
     }
     
     [Test]
-    public async Task GetAll_WhenRepositoryThrowsExeption_ReturnError()
+    public async Task GetAll_WhenRepositoryThrowsException_ReturnError()
     {
         _userRepositoryMock.Setup(x => x.GetAll()).Throws(new Exception("Darabase error"));
 
         var result = await _service.GetAll();
+        
         Assert.IsFalse(result.success);
         Assert.IsNull(result.Data);
         Assert.AreEqual(result.Description, "Darabase error");
@@ -121,7 +123,7 @@ public class UserServiceTests
     }
     
     [Test]
-    public async Task AddUsers_WhenSetListUserViewModelAndDbIsNotEmpty_ReturnSeccessFalseDataNull()
+    public async Task AddUsers_WhenSetListUserViewModelAndDbIsNotEmpty_ReturnSuccessFalseDataNull()
     {
         var userViewModels = new List<UserViewModel>()
         {
@@ -144,7 +146,7 @@ public class UserServiceTests
     }
     
     [Test]
-    public async Task AddUsers_WhenRepositoryThrowsExeption_ReturnError()
+    public async Task AddUsers_WhenRepositoryThrowsException_ReturnError()
     {
         var userViewModels = new List<UserViewModel>()
         {
@@ -155,10 +157,9 @@ public class UserServiceTests
         _userRepositoryMock.Setup(x => x.GetAll()).Throws(new Exception("Darabase error"));
 
         var result = await _service.AddUsers(userViewModels);
+        
         Assert.IsFalse(result.success);
         Assert.IsNull(result.Data);
         Assert.AreEqual(result.Description, "Darabase error");
     }
-    
-    
 }
