@@ -1,13 +1,12 @@
-using Ali_Mav.BlogAPI.Models.DTO;
+﻿using Ali_Mav.BlogAPI.Models.DTO;
 using Ali_Mav.BlogAPI.Models.Response;
 using Ali_Mav.BlogAPI.Service.Implementation;
 using Ali_Mav.BlogAPI.Service.Interface;
 using Moq;
 
-namespace BlogApiTests
-{
-    [TestFixture]
-    public class SeedServiceTests
+namespace TestProject1;
+
+  public class SeedServiceTests
     {
         private Mock<IUserService> _userService;
         private Mock<IJsonPlaceHolderService> _jsonPlaceHolderService;
@@ -28,7 +27,7 @@ namespace BlogApiTests
         }
 
         [Test]
-        public async Task SeedDataBase_WhenNoDataInDatabase_ShouldSeedData()
+        public async Task SeedDataBase_WhenNoDataInDatabase_ReturnServiceResponseSuccessIsTrue()
         {
             _jsonPlaceHolderService.Setup(x => x.FetchPost()).ReturnsAsync(new List<PostCreateDto>());
             _jsonPlaceHolderService.Setup(x => x.FetchUser()).ReturnsAsync(new List<UserViewModel>());
@@ -41,7 +40,7 @@ namespace BlogApiTests
         }
         
         [Test]
-        public async Task SeedDataBase_WhenWhereIsAlreadyDataInTheDatabase_ShouldSeedData()
+        public async Task SeedDataBase_WhenWhereIsAlreadyDataInTheDatabase_ReturnServiceResponseSuccessIsFalse()
         {
             var users = new List<User>
             {
@@ -59,4 +58,3 @@ namespace BlogApiTests
             Assert.That(result.success, Is.False);
         }
     }
-}

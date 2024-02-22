@@ -40,6 +40,7 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
                 }
                 else
                 {
+                    serviceResponse.Description = "There are already objects in the Database.";
                     serviceResponse.success = false;
                 }
 
@@ -52,9 +53,9 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
             return serviceResponse;
         }
 
-        public async Task<BaseResponse<Post>> CreatePost(PostCreateDto postDto)
+        public async Task<BaseResponse<PostGetDto>> CreatePost(PostCreateDto postDto)
         {
-            var serResponse = new BaseResponse<Post>();
+            var serResponse = new BaseResponse<PostGetDto>();
 
             try
             {
@@ -70,8 +71,9 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
                     };
 
                     await _postRepository.Create(post);
-                    
-                    serResponse.Data = post;
+
+                    var postGetDto = _mapper.Map<PostGetDto>(post);
+                    serResponse.Data = postGetDto;
                     serResponse.success = true;
                 }
                 else
@@ -93,7 +95,7 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
             var serviceResponse = new BaseResponse<bool>();
             try
             {
-                var post = await _postRepository.GetAll().FirstOrDefaultAsync(c => c.Id == id);
+                var post = await _postRepository.GetById(id);
                 if (post != null)
                 {
                     await _postRepository.Delete(id);
@@ -120,22 +122,15 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
         public async Task<BaseResponse<List<PostGetDto>>> GetAll()
         {
             var serviceResponse = new BaseResponse<List<PostGetDto>>();
-            List<PostGetDto> postDto = new List<PostGetDto>();
+            
             try
             {
-                var posts = await _postRepository.GetAll()
-                    .Include(c=>c.User)
-                    .ToListAsync();
-
+                var posts = _postRepository.GetAll();
                 if (posts.Any() == true)
                 {
-                    foreach (var item in posts)
-                    {
-                        postDto.Add(_mapper.Map<PostGetDto>(item));
-                    }
-
+                    
                     serviceResponse.success = true;
-                    serviceResponse.Data = postDto;
+                    serviceResponse.Data = _mapper.Map<List<PostGetDto>>(posts);
                 }
                 else
                 {
@@ -158,24 +153,21 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
             var serviceResponse = new BaseResponse<List<Post>>();
             try
             {
-                var dbPosts = await _postRepository.GetAll().ToListAsync();
-                if (pageSize <= 0 | pageSize > dbPosts.Count | pagenumber < dbPosts.Count/pageSize)
+                var dbPosts = _postRepository.GetAll().Count();
+                if (pageSize <= 0 | pageSize > dbPosts | pagenumber < dbPosts/pageSize)
                 {
-                    serviceResponse.Description = $"Pages starts from number 1 to {dbPosts.Count} " +
-                        $"and the page number should be no more than {(dbPosts.Count / pageSize) + 1}";
+                    serviceResponse.Description = $"Pages starts from number 1 to {dbPosts}";
                     serviceResponse.success = false;
                 }
                 else
                 {
-                    var posts = await _postRepository.GetAll()
-                        .Skip(pageSize*(pagenumber-1))
-                        .Take(pageSize)
-                        .ToListAsync();
-                    if (posts.Count >= 0)
-                    {
-                        serviceResponse.success = true;
-                        serviceResponse.Data = posts;
-                    }
+                    var posts = await _postRepository.GetPaging(pageSize, pagenumber);
+                    
+                    serviceResponse.success = true;
+                    serviceResponse.Data = posts;
+                    // if (posts.Count >= 0)
+                    // {
+                    // }
                 }
             }
             catch (Exception ex)
@@ -191,8 +183,8 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
             var seviceResponse = new BaseResponse<List<Post>>();
             try
             {
-                var posts = await _postRepository.GetAll()
-                    .Where(c => c.UserId == userid).ToListAsync();
+                var posts = _postRepository.GetAll()
+                    .Where(c => c.UserId == userid).ToList();
 
                 if (posts.Any() == false)
                 {
@@ -218,10 +210,10 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
             var serviceResponse = new BaseResponse<PostGetDto>();
             try
             {
-                var post = await _postRepository.GetAll().FirstOrDefaultAsync(p => p.Id == updatePost.Id);
+                var post = await _postRepository.GetById(updatePost.Id);
                 var responseUserService = await _userService.GetById(updatePost.UserId);
 
-                if (post != null && responseUserService != null) 
+                if (post != null && responseUserService.Data != null) 
                 {
                     var upNewPost = new Post()
                     {
@@ -244,7 +236,7 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
                     serviceResponse.success = false;
                     serviceResponse.Description = "PostId not found";
                 }
-                if (responseUserService == null)
+                if (responseUserService.Data == null)
                 {
                     serviceResponse.success = false;
                     serviceResponse.Description = "UserId not found";

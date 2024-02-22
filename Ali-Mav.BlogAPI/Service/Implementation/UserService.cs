@@ -46,7 +46,6 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
             catch (Exception ex)
             {
                 serviceResponse.Description = ex.Message;
-
             }
 
             return serviceResponse;
@@ -58,14 +57,17 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
 
             try
             {
-                var users = await _userRepository.GetAll().ToListAsync();
-                if (users.Any())
+                var users = _userRepository.GetAll();
+                if (!users.Any())
                 {
                     serviceResponse.success = false;
+                    serviceResponse.Description = "Users not found";
+                }
+                else
+                {
+                    serviceResponse.success = true;
                     serviceResponse.Data = users;
                 }
-                serviceResponse.success = true;
-                serviceResponse.Data = users;
 
             }
             catch (Exception ex)
@@ -83,7 +85,7 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
 
             try
             {
-                var user = await _userRepository.GetAll().FirstOrDefaultAsync(c => c.Id == userId);
+                var user = await _userRepository.GetById(userId);
                 if (user == null)
                 {
                     serviceResponse.success = true;
@@ -108,15 +110,17 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
             var serviceResponse = new BaseResponse<List<User>>();
             try
             {
-
-                var user = await GetUserByValue(word);
-                if (user == null)
+                if (string.IsNullOrWhiteSpace(word))
                 {
                     serviceResponse.success = false;
-                    serviceResponse.Description = "User not found";
+                    serviceResponse.Description = "Enter a word or letter";
                 }
-                serviceResponse.success = true;
-                serviceResponse.Data = user;
+                else
+                {
+                    var user = await _userRepository.SearchAsync(word);
+                    serviceResponse.success = true;
+                    serviceResponse.Data = user;
+                }
             }
             catch (Exception ex)
             {
@@ -124,30 +128,6 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
                 serviceResponse.success = false;
             }
             return serviceResponse;
-        }
-
-        private async Task<List<User>> GetUserByValue(string word)
-        {
-            var users = await _userRepository.GetAll().ToListAsync();
-            var response = new List<User>();
-            foreach (var user in users)
-            {
-                string wordUp = word.ToUpper();
-
-                string last = user.LastName.ToUpper();
-                string full = user.FullName.ToUpper();
-                string firt = user.FirstName.ToUpper();
-
-                bool lastname = last.Contains(wordUp);
-                bool fullName = full.Contains(wordUp);
-                bool firtName = firt.Contains(wordUp);
-
-                if (lastname || fullName || firtName)
-                {
-                     response.Add(user);
-                }
-            }
-            return response;
         }
     }
 }

@@ -7,6 +7,7 @@ namespace Ali_Mav.BlogAPI.Data.Interfaces
     {
         Task<List<Post>> GetUserPosts(int userId);
         Task AddRange(List<Post> posts);
+        Task<List<Post>> GetPaging(int pageSize, int pagenumber);
 
     }
 }

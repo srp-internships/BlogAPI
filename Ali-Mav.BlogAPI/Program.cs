@@ -2,10 +2,10 @@
 using Ali_Mav.BlogAPI.Data;
 using Ali_Mav.BlogAPI.Data.Interfaces;
 using Ali_Mav.BlogAPI.Data.Repositories;
+using Ali_Mav.BlogAPI.Models;
 using Ali_Mav.BlogAPI.Service.Implementation;
 using Ali_Mav.BlogAPI.Service.Interface;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Ali_Mav.BlogAPI
 {
@@ -23,6 +23,8 @@ namespace Ali_Mav.BlogAPI
             builder.Services.AddScoped<IPostRepository,PostRepository>();
             builder.Services.AddScoped<ISeedService,SeedService>();
             builder.Services.AddScoped<IJsonPlaceHolderService,JsonPlaceHolderService>();
+            builder.Services.AddScoped<IHttpClientWrapper,HttpClientWrapper>();
+            builder.Services.AddHttpClient();
 
 
             var connection = builder.Configuration.GetConnectionString("DbContext");

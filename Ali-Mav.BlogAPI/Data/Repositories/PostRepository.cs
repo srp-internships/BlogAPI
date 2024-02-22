@@ -20,10 +20,23 @@ namespace Ali_Mav.BlogAPI.Data.Repositories
             await _appDbContext.SaveChangesAsync();
         }
 
+        public async Task<List<Post>> GetPaging(int pageSize, int pagenumber)
+        {
+            var result = await _appDbContext.Posts.Skip(pageSize*(pagenumber-1))
+                .Take(pageSize).ToListAsync();
+            return result;
+        }
+
         public async Task Create(Post entity)
         {
             _appDbContext.Posts.Add(entity);
             await _appDbContext.SaveChangesAsync();
+        }
+
+        public async Task<Post> GetById(int id)
+        {
+            var post = await _appDbContext.Posts.FindAsync((id));
+            return post;
         }
 
         public async Task Delete(long id)
@@ -33,9 +46,9 @@ namespace Ali_Mav.BlogAPI.Data.Repositories
             await _appDbContext.SaveChangesAsync();
         }
 
-        public IQueryable<Post> GetAll()
+        public List<Post> GetAll()
         {
-            return _appDbContext.Posts;
+            return _appDbContext.Posts.ToList();
         }
 
         public async Task<List<Post>> GetUserPosts(int userId)

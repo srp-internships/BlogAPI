@@ -8,6 +8,7 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
         private readonly IJsonPlaceHolderService _jsonPlaceHolderService;
         private readonly IUserService _userService;
         private readonly IPostService _postService;
+
         public SeedService(IJsonPlaceHolderService jsonPlaceHolderService, IUserService userService, IPostService postService)
         {
             _jsonPlaceHolderService = jsonPlaceHolderService;

@@ -1,4 +1,5 @@
-﻿using Ali_Mav.BlogAPI.Models.DTO;
+﻿using Ali_Mav.BlogAPI.Models;
+using Ali_Mav.BlogAPI.Models.DTO;
 using Ali_Mav.BlogAPI.Service.Interface;
 using Newtonsoft.Json;
 
@@ -6,15 +7,15 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
 {
     public class JsonPlaceHolderService : IJsonPlaceHolderService
     {
-        private readonly HttpClient _httpClient;
-        public JsonPlaceHolderService(HttpClient httpClient)
+        private readonly IHttpClientWrapper _httpClient;
+        public JsonPlaceHolderService(IHttpClientWrapper httpClient)
         {
             _httpClient = httpClient;
         }
         public async Task<List<PostCreateDto>> FetchPost()
         {
             var url = "https://jsonplaceholder.typicode.com/posts";
-            //var httpClient = new HttpClient();
+
             var response = await _httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
@@ -31,7 +32,6 @@ namespace Ali_Mav.BlogAPI.Service.Implementation
         public async Task<List<UserViewModel>> FetchUser()
         {
             var url = "https://jsonplaceholder.typicode.com/users";
-            //var user = new HttpClient();
             var response = await _httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
