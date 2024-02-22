@@ -21,7 +21,7 @@ namespace Ali_Mav.BlogAPI.Controllers
             var response = await _seedService.SeedDataBase();
             if (response.success)
             {
-                return Ok();
+                return Ok(response);
             }
             return BadRequest(response.Description);
         }

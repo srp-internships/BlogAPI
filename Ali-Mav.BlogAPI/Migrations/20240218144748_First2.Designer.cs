@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ali_Mav.BlogAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240216090950_First")]
-    partial class First
+    [Migration("20240218144748_First2")]
+    partial class First2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

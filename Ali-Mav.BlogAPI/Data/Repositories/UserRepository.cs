@@ -12,10 +12,23 @@ namespace Ali_Mav.BlogAPI.Data.Repositories
         {
             _appDbContext = context;
         }
+
+        public async Task AddUsers(List<User> users)
+        {
+            await _appDbContext.Users.AddRangeAsync(users);
+            await _appDbContext.SaveChangesAsync();
+        }
+
         public async Task Create(User entity)
         {
             _appDbContext.Users.Add(entity);
             await _appDbContext.SaveChangesAsync();
+        }
+
+        public async Task<User> GetById(int id)
+        {
+            var user = await _appDbContext.Users.FindAsync((id));
+            return user;
         }
 
         public async Task Delete(long id)
@@ -25,9 +38,17 @@ namespace Ali_Mav.BlogAPI.Data.Repositories
             await _appDbContext.SaveChangesAsync();
         }
 
-        public IQueryable<User> GetAll()
+        public List<User> GetAll()
         {
-            return  _appDbContext.Users;
+            return _appDbContext.Users.ToList();
+        }
+
+        public async Task<List<User>> SearchAsync(string key)
+        {
+        return  await  _appDbContext.Users.Where(u =>
+                u.UserName.ToUpper().Contains(key.ToUpper()) 
+                || u.FirstName.ToUpper().Contains(key.ToUpper()) 
+                || u.LastName.ToUpper().Contains(key.ToUpper())).ToListAsync();
         }
 
         public async Task<User> Update(User entity)

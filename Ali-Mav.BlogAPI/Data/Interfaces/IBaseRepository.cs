@@ -3,7 +3,8 @@
     public interface IBaseRepository<T>
     {
         Task Create(T entity);
-        IQueryable<T> GetAll();
+        List<T> GetAll();
+        Task<T> GetById(int id);
         Task Delete(long id);
         Task<T> Update(T entity);
 

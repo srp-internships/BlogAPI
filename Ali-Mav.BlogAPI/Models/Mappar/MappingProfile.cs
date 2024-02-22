@@ -21,6 +21,9 @@ namespace Ali_Mav.BlogAPI.Data.Mappar
                 opt => opt.MapFrom(src => src.User.FullName));
 
             this.CreateMap<Post, PostCreateDto>();
+            this.CreateMap<PostCreateDto, Post>();
+            this.CreateMap<Post, PostUpdateDto>();
+            this.CreateMap<PostUpdateDto, Post>();
 
 
         }
